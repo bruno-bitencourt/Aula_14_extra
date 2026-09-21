@@ -26,6 +26,13 @@ dados_aula14$F_IDADE <- cut(dados_aula14$IDADE_PROPRIETARIO, breaks = c(21, 34, 
 # criar a variável PAM (somente quando TIPO_VEICULO = "Carro"), de acordo com IDADE_PROPRIETARIO e SEXO_PROPRIETARIO, com as seguintes categorias:
 # PAM = "PIC", se VALOR_VEICULO < VALOR_P10; "AIC", se VALOR_P10 <= VALOR_VEICULO <= VALOR_P90; "GIC", se VALOR_VEICULO > VALOR_P90
 
+tabela_pam <- read.csv2("Tabela_PAM.csv")
+dados_aula14 <- merge(dados_aula14, tabela_pam, all.x = TRUE)
+dados_aula14$PAM <- NA
+dados_aula14$PAM[dados_aula14$TIPO_VEICULO == "Carro" & dados_aula14$VALOR_VEICULO < dados_aula14$VALOR_P10] <- "PIC"
+dados_aula14$PAM[dados_aula14$TIPO_VEICULO == "Carro" & dados_aula14$VALOR_VEICULO >= dados_aula14$VALOR_P10 & dados_aula14$VALOR_VEICULO <= dados_aula14$VALOR_P90] <- "AIC"
+dados_aula14$PAM[dados_aula14$TIPO_VEICULO == "Carro" & dados_aula14$VALOR_VEICULO > dados_aula14$VALOR_P90] <- "GIC"
+
 # Ao terminar a Tarefa 3 commit com a mensagem " script - tarefa 1 a 3" e envie para o repositório Aula_14_Extra
 
  
