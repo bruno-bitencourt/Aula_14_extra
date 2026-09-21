@@ -67,6 +67,75 @@ dados_aula14$PAM[dados_aula14$TIPO_VEICULO == "Carro" & dados_aula14$VALOR_VEICU
 # TAIC: total de compradores com perfil AIC
 # TGIC: total de compradores com perfil GIC
 
+library(dplyr)
+
+vars_originais <- c("MUNICIPIO", "SEXO_PROPRIETARIO", "IDADE_PROPRIETARIO", "TIPO_VEICULO", "VALOR_VEICULO")
+dados_aula14$REGISTRO_COMPLETO <- complete.cases(dados_aula14[, vars_originais])
+
+resumo_uf <- dados_aula14 %>%
+  summarise(
+    ANO = 2025,
+    NIVEL = "UF",
+    CODIGO = 33,
+    TVV = n(),
+    TVRC = sum(REGISTRO_COMPLETO, na.rm = TRUE),
+    TVVF = sum(SEXO_PROPRIETARIO == "Feminino", na.rm = TRUE),
+    TVVM = sum(SEXO_PROPRIETARIO == "Masculino", na.rm = TRUE),
+    TVCF = sum(TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino", na.rm = TRUE),
+    TVCM = sum(TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Masculino", na.rm = TRUE),
+    TVMF = sum(TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Feminino", na.rm = TRUE),
+    TVMM = sum(TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino", na.rm = TRUE),
+    TVC_22_34 = sum(TIPO_VEICULO == "Carro" & F_IDADE == "22 a 34", na.rm = TRUE),
+    TVC_35_45 = sum(TIPO_VEICULO == "Carro" & F_IDADE == "35 a 45", na.rm = TRUE),
+    IMVCF = mean(IDADE_PROPRIETARIO[TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino"], na.rm = TRUE),
+    DPVCF = sd(IDADE_PROPRIETARIO[TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino"], na.rm = TRUE),
+    IVCF_P25 = if(any(TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino", na.rm = TRUE)) quantile(IDADE_PROPRIETARIO[TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino"], 0.25, na.rm = TRUE) else NA_real_,
+    IVCF_P50 = if(any(TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino", na.rm = TRUE)) quantile(IDADE_PROPRIETARIO[TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino"], 0.50, na.rm = TRUE) else NA_real_,
+    IVCF_P75 = if(any(TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino", na.rm = TRUE)) quantile(IDADE_PROPRIETARIO[TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino"], 0.75, na.rm = TRUE) else NA_real_,
+    IMVMM = mean(IDADE_PROPRIETARIO[TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino"], na.rm = TRUE),
+    DPVMM = sd(IDADE_PROPRIETARIO[TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino"], na.rm = TRUE),
+    IVMM_P25 = if(any(TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino", na.rm = TRUE)) quantile(IDADE_PROPRIETARIO[TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino"], 0.25, na.rm = TRUE) else NA_real_,
+    IVMM_P50 = if(any(TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino", na.rm = TRUE)) quantile(IDADE_PROPRIETARIO[TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino"], 0.50, na.rm = TRUE) else NA_real_,
+    IVMM_P75 = if(any(TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino", na.rm = TRUE)) quantile(IDADE_PROPRIETARIO[TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino"], 0.75, na.rm = TRUE) else NA_real_,
+    TPIC = sum(PAM == "PIC", na.rm = TRUE),
+    TAIC = sum(PAM == "AIC", na.rm = TRUE),
+    TGIC = sum(PAM == "GIC", na.rm = TRUE)
+  )
+
+resumo_mun <- dados_aula14 %>%
+  group_by(CODIGO = MUNICIPIO) %>%
+  summarise(
+    ANO = 2025,
+    NIVEL = "MUNICIPIO",
+    TVV = n(),
+    TVRC = sum(REGISTRO_COMPLETO, na.rm = TRUE),
+    TVVF = sum(SEXO_PROPRIETARIO == "Feminino", na.rm = TRUE),
+    TVVM = sum(SEXO_PROPRIETARIO == "Masculino", na.rm = TRUE),
+    TVCF = sum(TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino", na.rm = TRUE),
+    TVCM = sum(TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Masculino", na.rm = TRUE),
+    TVMF = sum(TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Feminino", na.rm = TRUE),
+    TVMM = sum(TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino", na.rm = TRUE),
+    TVC_22_34 = sum(TIPO_VEICULO == "Carro" & F_IDADE == "22 a 34", na.rm = TRUE),
+    TVC_35_45 = sum(TIPO_VEICULO == "Carro" & F_IDADE == "35 a 45", na.rm = TRUE),
+    IMVCF = mean(IDADE_PROPRIETARIO[TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino"], na.rm = TRUE),
+    DPVCF = sd(IDADE_PROPRIETARIO[TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino"], na.rm = TRUE),
+    IVCF_P25 = if(any(TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino", na.rm = TRUE)) quantile(IDADE_PROPRIETARIO[TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino"], 0.25, na.rm = TRUE) else NA_real_,
+    IVCF_P50 = if(any(TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino", na.rm = TRUE)) quantile(IDADE_PROPRIETARIO[TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino"], 0.50, na.rm = TRUE) else NA_real_,
+    IVCF_P75 = if(any(TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino", na.rm = TRUE)) quantile(IDADE_PROPRIETARIO[TIPO_VEICULO == "Carro" & SEXO_PROPRIETARIO == "Feminino"], 0.75, na.rm = TRUE) else NA_real_,
+    IMVMM = mean(IDADE_PROPRIETARIO[TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino"], na.rm = TRUE),
+    DPVMM = sd(IDADE_PROPRIETARIO[TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino"], na.rm = TRUE),
+    IVMM_P25 = if(any(TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino", na.rm = TRUE)) quantile(IDADE_PROPRIETARIO[TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino"], 0.25, na.rm = TRUE) else NA_real_,
+    IVMM_P50 = if(any(TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino", na.rm = TRUE)) quantile(IDADE_PROPRIETARIO[TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino"], 0.50, na.rm = TRUE) else NA_real_,
+    IVMM_P75 = if(any(TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino", na.rm = TRUE)) quantile(IDADE_PROPRIETARIO[TIPO_VEICULO == "Moto" & SEXO_PROPRIETARIO == "Masculino"], 0.75, na.rm = TRUE) else NA_real_,
+    TPIC = sum(PAM == "PIC", na.rm = TRUE),
+    TAIC = sum(PAM == "AIC", na.rm = TRUE),
+    TGIC = sum(PAM == "GIC", na.rm = TRUE)
+  ) %>%
+  select(ANO, NIVEL, CODIGO, everything())
+
+BACO_AULA14_RJ <- bind_rows(resumo_uf, resumo_mun)
+
+
 # Ao terminar a Tarefa 4 commit com a mensagem " script - tarefa 1 a 4" e envie para o repositório Aula_14_Extra
 
 
